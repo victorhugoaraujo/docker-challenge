@@ -13,15 +13,18 @@ app.get('/', (req, res) => {
 	const connection = mysql.createConnection(config)
 
 	const createTable = `CREATE TABLE IF NOT EXISTS people(id int NOT NULL auto_increment, name varchar(255) NOT NULL, PRIMARY KEY(id))`
-	connection.query(createTable);
+	connection.query(createTable, (err) => {
+		if (err) throw err;
+		console.log('table created')
+	});
 
 	const insertPerson = "INSERT INTO people(name) values('Victor')"
 	connection.query(insertPerson);
 
 	const selectPeople = `SELECT name FROM people`
 	connection.query(selectPeople, (_, result) => {
-		const peopleNames = result.map(item => `<li>${item.name}</li>`)
-		res.send(`<div><h1>Full Cycle Rocks!!!</h1> <ul>${peopleNames.join(" ")}</ul></div>`)
+		const peopleNames = result?.map(item => `<li>${item.name}</li>`)
+		res.send(`<div><h1>Full Cycle Rocks!!!</h1> <ul>${peopleNames?.join(" ")}</ul></div>`)
 	});
 	connection.end()
 })
